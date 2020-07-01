@@ -1,7 +1,8 @@
 import React from 'react';
 import './Stories.css';
 import Story from './Story';
-
+import { connect } from 'react-redux';
+import { getReadableStories, getFetchError } from '../selectors/story';
 const COLUMNS = {
     title: {
     label: 'Title',
@@ -24,17 +25,19 @@ const COLUMNS = {
     },
     };
 
-
-const Stories = ({ stories, onArchive }) =>
+const mapStateToProps = state => ({
+        stories: getReadableStories(state),
+        error: getFetchError(state),
+        });
+const Stories = ({ stories, error }) =>
 <div className="stories">
     <StoriesHeader columns={COLUMNS} />
-
+    { error && <p className="error">Something went wrong ...</p> }
     {(stories || []).map(story =>
         <Story
         key={story.objectID}
         story={story}
         columns={COLUMNS}
-        onArchive={onArchive}
         />
     )}  
 </div>
@@ -51,4 +54,7 @@ style={{ width: columns[key].width }}
 )}
 </div>
 
-export default Stories;
+export default connect(
+    mapStateToProps,
+    )(Stories);
+    
